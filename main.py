@@ -3,7 +3,7 @@ from decouple import config
 
 if __name__ == '__main__':
 	try:
-		# Getting vars from .env file
+		# Getting api config from .env file
 		api_id = config('api_id')
 		api_hash = config('api_hash')
 		user_phone_number = config('phonenum_to_watch')
@@ -19,10 +19,26 @@ if __name__ == '__main__':
 			message_obj = event.message
 			message_id = message_obj.id
 			message_text = message_obj.message
+			peer_id = message_obj.peer_id
+			entity_id = ''
+			if hasattr(peer_id, 'user_id'):
+				entity_id = peer_id.user_id
+
+			if hasattr(peer_id, 'channel_id'):
+				entity_id = peer_id.channel_id
+
+
+
+			#print(message_obj)
+			#print('Message ID: {}, Message Text: {}, Entity ID: {}'.format(message_id, message_text, entity_id))
+
+			# Replacing the captured method with the new string
+			await client.edit_message(entity=entity_id, message=message_id, text='Replacement test')
 
 
 		with client:
 			client.loop.run_forever()
 
 	except KeyboardInterrupt:
-		print('Disconnecting and closing Yingifier')
+		print('\nDisconnecting and closing Yingifier')
+		client.disconnect()
