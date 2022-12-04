@@ -1,9 +1,10 @@
-from telethon import TelegramClient, events
+from telethon import TelegramClient, events, errors
 from decouple import config
 
 if __name__ == '__main__':
 	try:
-		# Getting api config from .env file
+		# Getting config from .env file
+		DEBUG_MODE = config('debug_mode')
 		api_id = config('api_id')
 		api_hash = config('api_hash')
 		user_phone_number = config('phonenum_to_watch')
@@ -27,18 +28,22 @@ if __name__ == '__main__':
 			if hasattr(peer_id, 'channel_id'):
 				entity_id = peer_id.channel_id
 
+			if DEBUG_MODE is True:
+				print(message_obj)
+				print('Message ID: {}, Message Text: {}, Entity ID: {}'.format(message_id, message_text, entity_id))
 
-
-			#print(message_obj)
-			#print('Message ID: {}, Message Text: {}, Entity ID: {}'.format(message_id, message_text, entity_id))
+			# Translating the message to Yinglish
+			new_message_text = message_text.replace('th', 'zh')
 
 			# Replacing the captured method with the new string
-			await client.edit_message(entity=entity_id, message=message_id, text='Replacement test')
-
+			try:
+				await client.edit_message(entity=entity_id, message=message_id, text=new_message_text)
+			except errors.MessageNotModifiedError:
+				pass
 
 		with client:
 			client.loop.run_forever()
 
 	except KeyboardInterrupt:
-		print('\nDisconnecting and closing Yingifier')
+		print('\nDisconnecting from Telegram and closing Yingifier')
 		client.disconnect()
