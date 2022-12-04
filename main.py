@@ -3,6 +3,15 @@ from decouple import config
 
 if __name__ == '__main__':
 	try:
+		# Console Title
+		print('▄▄   ▄▄ ▄▄▄ ▄▄    ▄ ▄▄▄▄▄▄▄ ▄▄▄ ▄▄▄▄▄▄▄ ▄▄▄ ▄▄▄▄▄▄▄ ▄▄▄▄▄▄')
+		print('█  █ █  █   █  █  █ █       █   █       █   █       █   ▄  █')
+		print('█  █▄█  █   █   █▄█ █   ▄▄▄▄█   █    ▄▄▄█   █    ▄▄▄█  █ █ █')
+		print('█       █   █       █  █  ▄▄█   █   █▄▄▄█   █   █▄▄▄█   █▄▄█▄')
+		print('█▄     ▄█   █  ▄    █  █ █  █   █    ▄▄▄█   █    ▄▄▄█    ▄▄  █')
+		print('  █   █ █   █ █ █   █  █▄▄█ █   █   █   █   █   █▄▄▄█   █  █ █')
+		print('  █▄▄▄█ █▄▄▄█▄█  █▄▄█▄▄▄▄▄▄▄█▄▄▄█▄▄▄█   █▄▄▄█▄▄▄▄▄▄▄█▄▄▄█  █▄█')
+
 		# Getting config from .env file
 		DEBUG_MODE = config('debug_mode')
 		api_id = config('api_id')
@@ -10,8 +19,10 @@ if __name__ == '__main__':
 		user_phone_number = config('phonenum_to_watch')
 
 		# Starting the telegram client
+		print('\nStarting Telegram Session...')
 		client = TelegramClient('Yingifier_Session', api_id, api_hash)
 		client.start()
+		print('Waiting for message to yingify... (press ctrl+c to close)')
 
 		# Event watcher waiting for when the user to send a message to any channel/chat
 		@client.on(events.NewMessage(outgoing=True))
@@ -38,6 +49,7 @@ if __name__ == '__main__':
 			# Replacing the captured method with the new string
 			try:
 				await client.edit_message(entity=entity_id, message=message_id, text=new_message_text)
+				print('\tEditing: "{}"'.format(message_text))
 			except errors.MessageNotModifiedError:
 				pass
 
